@@ -1,22 +1,43 @@
-import { NativeModules, Platform } from 'react-native';
+import { NativeModules, NativeEventEmitter, EmitterSubscription } from 'react-native'
+import { quaternionToEuler } from './utils/quaternionToEuler'
 
-const LINKING_ERROR =
-  `The package 'react-native-orientation-angle' doesn't seem to be linked. Make sure: \n\n` +
-  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
-  '- You rebuilt the app after installing the package\n' +
-  '- You are not using Expo managed workflow\n';
+const { OrientationAngle } = NativeModules
 
-const OrientationAngle = NativeModules.OrientationAngle
-  ? NativeModules.OrientationAngle
-  : new Proxy(
-      {},
-      {
-        get() {
-          throw new Error(LINKING_ERROR);
-        },
-      }
-    );
+const eventEmitter = new NativeEventEmitter(OrientationAngle)
 
-export function multiply(a: number, b: number): Promise<number> {
-  return OrientationAngle.multiply(a, b);
+type Callback = ({}: { pitch: number; roll: number; yaw: number }) => void
+
+let subscription: EmitterSubscription | null = null
+
+const orientationAngle = {
+  subscribe(callback: Callback) {
+    if (!subscription) {
+      subscription = eventEmitter.addListener('OrientationAngle', (event) => {
+        callback(quaternionToEuler(event))
+      })
+    } else {
+      console.warn('Already subscribed')
+    }
+  },
+
+  unsubscribe() {
+    if (subscription) {
+      subscription.remove()
+      subscription = null
+    } else {
+      console.warn('Already unsubscribed')
+    }
+  },
+
+  setUpdateInterval(interval: number) {
+    OrientationAngle.setUpdateInterval(interval / 1000) // millisecond to second
+  },
+
+  getUpdateInterval(callback: (interval: number) => void) {
+    OrientationAngle.getUpdateInterval((interval: number) => {
+      callback(Math.round(interval * 1000)) // second to millisecond
+    })
+  },
 }
+
+export { orientationAngle }
