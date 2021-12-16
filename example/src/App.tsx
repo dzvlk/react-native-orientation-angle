@@ -1,9 +1,23 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native'
 import { orientationAngle } from 'react-native-orientation-angle'
 
+const intervalList = [100, 500, 1000]
+
 export default function App() {
+  const [interval, setInterval] = useState(0)
   const [result, setResult] = useState({ pitch: 0, roll: 0, yaw: 0 })
+
+  useEffect(() => {
+    orientationAngle.getUpdateInterval((value) => {
+      setInterval(value)
+    })
+  }, [])
+
+  const changeInterval = (value: number) => {
+    orientationAngle.setUpdateInterval(value)
+    setInterval(value)
+  }
 
   const subscribe = () => {
     orientationAngle.subscribe(setResult)
@@ -22,9 +36,19 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.intervalText}>Update Interval: {interval}ms</Text>
+
       {renderValue('pitch', result.pitch.toFixed(2))}
       {renderValue('roll', result.roll.toFixed(2))}
       {renderValue('yaw', result.yaw.toFixed(2))}
+
+      <View style={styles.buttonWrapper}>
+        {intervalList.map((value) => (
+          <TouchableOpacity key={value} style={styles.button} onPress={() => changeInterval(value)}>
+            <Text>{value}ms</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
 
       <View style={styles.buttonWrapper}>
         <TouchableOpacity style={styles.button} onPress={subscribe}>
@@ -45,6 +69,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  intervalText: {
+    fontSize: 16,
+    marginBottom: 18,
+    opacity: 0.5,
+  },
   box: {
     width: 100,
     flexDirection: 'row',
@@ -56,8 +85,9 @@ const styles = StyleSheet.create({
   buttonWrapper: {
     width: '100%',
     marginTop: 32,
+    paddingHorizontal: 16,
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
   },
   button: {
     paddingVertical: 8,

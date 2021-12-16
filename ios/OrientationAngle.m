@@ -13,6 +13,7 @@ RCT_EXPORT_MODULE();
 - ()init {
     if (self = [super init]) {
         _motionManager = [[CMMotionManager alloc] init];
+        [_motionManager setDeviceMotionUpdateInterval:0.1];
     }
     
     return self;
@@ -55,15 +56,16 @@ RCT_EXPORT_MODULE();
     [_motionManager stopDeviceMotionUpdates];
 }
 
-RCT_EXPORT_METHOD(setUpdateInterval:(float) interval)
-{
+RCT_EXPORT_METHOD(setUpdateInterval:(float) newInterval) {
+    float interval = newInterval / 1000; // millisecond to second
+    
     NSLog(@"setUpdateInterval: %f", interval);
 	
     [_motionManager setDeviceMotionUpdateInterval:interval];
 }
 
 RCT_EXPORT_METHOD(getUpdateInterval:(RCTResponseSenderBlock) callback) {
-    float interval = _motionManager.deviceMotionUpdateInterval;
+    float interval = _motionManager.deviceMotionUpdateInterval * 1000; // second to millisecond
 
     NSLog(@"getUpdateInterval: %f", interval);
 

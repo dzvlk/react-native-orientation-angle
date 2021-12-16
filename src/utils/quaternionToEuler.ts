@@ -1,11 +1,6 @@
-type Data = {
-  x: number
-  y: number
-  z: number
-  w: number
-}
+import type { EventData } from '../types'
 
-export const quaternionToEuler = (data: Data) => {
+export const quaternionToEuler = (data: EventData) => {
   const ysqr = data.y * data.y
   const t0 = -2.0 * (ysqr + data.z * data.z) + 1.0
   const t1 = +2.0 * (data.x * data.y + data.w * data.z)

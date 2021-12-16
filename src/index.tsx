@@ -1,18 +1,22 @@
-import { NativeModules, NativeEventEmitter, EmitterSubscription } from 'react-native'
+import { NativeModules, NativeEventEmitter, EmitterSubscription, Platform } from 'react-native'
+
 import { quaternionToEuler } from './utils/quaternionToEuler'
+import type { IOrientationAngle, EventData } from './types'
+
+const isAndroid = Platform.OS === 'android'
 
 const { OrientationAngle } = NativeModules
 
 const eventEmitter = new NativeEventEmitter(OrientationAngle)
 
-type Callback = ({}: { pitch: number; roll: number; yaw: number }) => void
-
 let subscription: EmitterSubscription | null = null
 
-const orientationAngle = {
-  subscribe(callback: Callback) {
+const orientationAngle: IOrientationAngle = {
+  subscribe(callback) {
     if (!subscription) {
-      subscription = eventEmitter.addListener('OrientationAngle', (event) => {
+      if (isAndroid) OrientationAngle.startUpdates()
+
+      subscription = eventEmitter.addListener('OrientationAngle', (event: EventData) => {
         callback(quaternionToEuler(event))
       })
     } else {
@@ -22,6 +26,8 @@ const orientationAngle = {
 
   unsubscribe() {
     if (subscription) {
+      if (isAndroid) OrientationAngle.stopUpdates()
+
       subscription.remove()
       subscription = null
     } else {
@@ -30,13 +36,11 @@ const orientationAngle = {
   },
 
   setUpdateInterval(interval: number) {
-    OrientationAngle.setUpdateInterval(interval / 1000) // millisecond to second
+    OrientationAngle.setUpdateInterval(interval)
   },
 
-  getUpdateInterval(callback: (interval: number) => void) {
-    OrientationAngle.getUpdateInterval((interval: number) => {
-      callback(Math.round(interval * 1000)) // second to millisecond
-    })
+  getUpdateInterval(callback) {
+    OrientationAngle.getUpdateInterval(callback)
   },
 }
 
