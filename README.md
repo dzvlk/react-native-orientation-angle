@@ -1,27 +1,77 @@
-# react-native-orientation-angle
+# React Native Orientation Angle
 
-Orientation library for react-native
+[![npm version](https://badge.fury.io/js/react-native-orientation-angle.svg)](https://badge.fury.io/js/react-native-orientation-angle)
 
-## Installation
+A React Native module that allows you to get device orientation angle
 
-```sh
-npm install react-native-orientation-angle
+# Installation
+
+```
+yarn add react-native-orientation-angle
+
+# RN >= 0.60
+cd ios && pod install
 ```
 
-## Usage
+# API
+
+### `subscribe()`
+
+Subscribe to device motion
 
 ```js
-import { multiply } from "react-native-orientation-angle";
-
-// ...
-
-const result = await multiply(3, 7);
+orientationAngle.subscribe((angles) => {
+  console.log(angles) // { pitch: 0, roll: 0, yaw: 0 }
+})
 ```
 
-## Contributing
+### `unsubscribe()`
 
-See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
+Unsubscribe from device motion
+
+```js
+orientationAngle.unsubscribe()
+```
+
+### `setUpdateInterval()`
+
+Set update interval in milliseconds (100, 200, 300)
+
+```js
+orientationAngle.setUpdateInterval(100) // milliseconds
+```
+
+### `getUpdateInterval()`
+
+Get update interval in milliseconds
+
+```js
+orientationAngle.getUpdateInterval((milliseconds) => {
+  console.log(milliseconds)
+})
+```
+
+# Hook Usage
+
+```js
+import { useEffect } from 'react'
+import { orientationAngle } from 'react-native-orientation-angle'
+
+export const useOrientationAngle = () => {
+  useEffect(() => {
+    orientationAngle.setUpdateInterval(300)
+
+    orientationAngle.subscribe((angles) => {
+      console.log(angles)
+    })
+
+    return () => {
+      orientationAngle.unsubscribe()
+    }
+  }, [])
+}
+```
 
 ## License
 
-MIT
+[MIT](LICENSE.md)
