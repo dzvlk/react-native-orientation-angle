@@ -36,13 +36,13 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/dzvlk/react-native-orientation-angle.git/react-native-orientation-angle",
-  "author": "Danil Zavoloka <danil.z.git@gmail.com> (https://github.com/dzvlk/react-native-orientation-angle.git)",
+  "repository": "https://github.com/dzvlk/react-native-orientation-angle",
+  "author": "Danil Zavoloka <danil.z.git@gmail.com> (https://github.com/dzvlk/react-native-orientation-angle)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dzvlk/react-native-orientation-angle.git/react-native-orientation-angle/issues"
+    "url": "https://github.com/dzvlk/react-native-orientation-angle/issues"
   },
-  "homepage": "https://github.com/dzvlk/react-native-orientation-angle.git/react-native-orientation-angle#readme",
+  "homepage": "https://github.com/dzvlk/react-native-orientation-angle#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
