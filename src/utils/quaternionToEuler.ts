@@ -11,11 +11,14 @@ export const quaternionToEuler = (data: EventData) => {
   t2 = t2 > 1.0 ? 1.0 : t2
   t2 = t2 < -1.0 ? -1.0 : t2
 
-  const toDeg = 180 / Math.PI
+  const toDeg = 180 / Math.PI;
+  const pre_pitch = Math.atan2(t3, t4) * toDeg;
+  const _pitch =
+    pre_pitch < 0 && Math.abs(pre_pitch) > 90 ? 360 + pre_pitch : pre_pitch;
 
   return {
-    pitch: Math.atan2(t3, t4) * toDeg,
+    pitch: _pitch - 90,
     roll: Math.asin(t2) * toDeg,
-    yaw: Math.atan2(t1, t0) * toDeg,
-  }
+    yaw: -Math.atan2(t1, t0) * toDeg,
+  };
 }
