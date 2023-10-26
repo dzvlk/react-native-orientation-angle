@@ -49,7 +49,7 @@ public class OrientationAngleModule extends ReactContextBaseJavaModule implement
 
 		@ReactMethod
 		public void startUpdates() {
-				this.sensorManager.registerListener(this, sensor, this.sensorManager.SENSOR_DELAY_NORMAL);
+				this.sensorManager.registerListener(this, sensor, this.sensorManager.SENSOR_DELAY_FASTEST);
 		}
 
 		@ReactMethod
